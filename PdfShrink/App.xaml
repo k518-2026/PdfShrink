@@ -1,0 +1,353 @@
+﻿<Application x:Class="PdfShrink.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+
+
+            <!-- パレット -->
+            <Color x:Key="InkColor">#FF10141A</Color>
+            <SolidColorBrush x:Key="Ink" Color="#FF10141A" />
+            <SolidColorBrush x:Key="Panel" Color="#FF181F27" />
+            <SolidColorBrush x:Key="Surface" Color="#FF212A34" />
+            <SolidColorBrush x:Key="SurfaceHi" Color="#FF2B3743" />
+            <SolidColorBrush x:Key="Line" Color="#FF33404E" />
+            <SolidColorBrush x:Key="Text" Color="#FFE6ECF2" />
+            <SolidColorBrush x:Key="Muted" Color="#FF8E9BAA" />
+            <SolidColorBrush x:Key="Accent" Color="#FF35C1A6" />
+            <SolidColorBrush x:Key="AccentDim" Color="#FF1E6E60" />
+            <SolidColorBrush x:Key="Warn" Color="#FFE8A33D" />
+            <SolidColorBrush x:Key="Danger" Color="#FFE5544B" />
+
+            <FontFamily x:Key="UiFont">Yu Gothic UI, Meiryo UI, Segoe UI</FontFamily>
+            <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas, MS Gothic</FontFamily>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+            </Style>
+
+            <Style x:Key="Eyebrow" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+                <Setter Property="FontSize" Value="10.5" />
+                <Setter Property="Foreground" Value="{StaticResource Muted}" />
+                <Setter Property="Margin" Value="0,0,0,6" />
+            </Style>
+
+            <Style x:Key="H2" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+            </Style>
+
+            <Style x:Key="Mono" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+            </Style>
+
+            <Style TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Muted}" />
+                <Setter Property="Padding" Value="0,0,0,2" />
+            </Style>
+
+            <Style TargetType="Button">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Background" Value="{StaticResource SurfaceHi}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="Margin" Value="0,0,8,8" />
+                <Setter Property="MinWidth" Value="96" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="3" SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  Margin="{TemplateBinding Padding}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{StaticResource AccentDim}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="bd" Property="Opacity" Value="0.4" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="BorderBrush" Value="{StaticResource Danger}" />
+                <Setter Property="Foreground" Value="#FFFFC9C5" />
+            </Style>
+
+            <Style TargetType="TextBox">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Background" Value="{StaticResource Ink}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="CaretBrush" Value="{StaticResource Accent}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Padding" Value="6,4" />
+                <Setter Property="Margin" Value="0,0,8,8" />
+            </Style>
+
+            <!--
+                コンボボックスはアプリ本体と同じダーク配色で自前で描きます。
+                ControlTemplate の内部で生成されるテキストには、アプリケーション階層の
+                暗黙スタイル（上の TextBlock 既定＝明るい文字色）だけが適用されるため、
+                下地を暗くしておくのが最も確実です。
+            -->
+            <Style TargetType="ComboBox">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Margin" Value="0,0,8,8" />
+                <Setter Property="MinWidth" Value="110" />
+                <Setter Property="MinHeight" Value="30" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="Background" Value="{StaticResource Surface}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <ToggleButton x:Name="Toggle" Focusable="False" ClickMode="Press"
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                          RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border x:Name="Field"
+                                                    Background="{StaticResource Surface}"
+                                                    BorderBrush="{StaticResource Line}"
+                                                    BorderThickness="1" CornerRadius="3"
+                                                    SnapsToDevicePixels="True">
+                                                <Path x:Name="Chevron" Data="M0,0 L9,0 L4.5,5.5 Z"
+                                                      Fill="{StaticResource Muted}"
+                                                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                      Margin="0,0,11,0" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Field" Property="Background"
+                                                            Value="{StaticResource SurfaceHi}" />
+                                                    <Setter TargetName="Field" Property="BorderBrush"
+                                                            Value="{StaticResource Accent}" />
+                                                    <Setter TargetName="Chevron" Property="Fill"
+                                                            Value="{StaticResource Accent}" />
+                                                </Trigger>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="Field" Property="BorderBrush"
+                                                            Value="{StaticResource Accent}" />
+                                                    <Setter TargetName="Chevron" Property="Fill"
+                                                            Value="{StaticResource Accent}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+
+                                <!-- 閉じているときに見えている選択中の項目 -->
+                                <ContentPresenter x:Name="Selected" IsHitTestVisible="False"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                                  Margin="11,0,32,0"
+                                                  HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                                <Popup x:Name="PART_Popup" Placement="Bottom" Focusable="False"
+                                       AllowsTransparency="True" PopupAnimation="None"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}">
+                                    <Border Background="{StaticResource Panel}"
+                                            BorderBrush="{StaticResource Accent}" BorderThickness="1"
+                                            CornerRadius="3" Margin="0,2,0,8"
+                                            MinWidth="{TemplateBinding ActualWidth}"
+                                            MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                            SnapsToDevicePixels="True">
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="#FF000000" BlurRadius="14"
+                                                              ShadowDepth="3" Opacity="0.55" />
+                                        </Border.Effect>
+                                        <ScrollViewer SnapsToDevicePixels="True">
+                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.45" />
+                                </Trigger>
+                                <Trigger Property="HasItems" Value="False">
+                                    <Setter TargetName="PART_Popup" Property="IsOpen" Value="False" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="Padding" Value="11,7" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBoxItem">
+                            <Border x:Name="Row" Background="Transparent"
+                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Row" Property="Background"
+                                            Value="{StaticResource AccentDim}" />
+                                </Trigger>
+                                <Trigger Property="IsHighlighted" Value="True">
+                                    <Setter TargetName="Row" Property="Background"
+                                            Value="{StaticResource SurfaceHi}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.45" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ツールチップも同じ理由でダーク配色にします -->
+            <Style TargetType="ToolTip">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="Background" Value="{StaticResource Panel}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="Padding" Value="11,8" />
+                <Setter Property="MaxWidth" Value="420" />
+                <Setter Property="HasDropShadow" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1" CornerRadius="3"
+                                    Padding="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="CheckBox">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="Margin" Value="0,0,16,8" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style TargetType="GroupBox">
+                <Setter Property="Foreground" Value="{StaticResource Muted}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Margin" Value="0,0,0,14" />
+                <Setter Property="Padding" Value="12" />
+            </Style>
+
+            <Style TargetType="DataGrid">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Background" Value="{StaticResource Panel}" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="RowBackground" Value="{StaticResource Panel}" />
+                <Setter Property="AlternatingRowBackground" Value="{StaticResource Surface}" />
+                <Setter Property="GridLinesVisibility" Value="Horizontal" />
+                <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource Line}" />
+                <Setter Property="HeadersVisibility" Value="Column" />
+                <Setter Property="AutoGenerateColumns" Value="False" />
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="CanUserAddRows" Value="False" />
+                <Setter Property="SelectionMode" Value="Single" />
+                <Setter Property="RowHeight" Value="26" />
+            </Style>
+
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="{StaticResource SurfaceHi}" />
+                <Setter Property="Foreground" Value="{StaticResource Muted}" />
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Setter Property="Padding" Value="8,6" />
+                <Setter Property="BorderBrush" Value="{StaticResource Line}" />
+                <Setter Property="BorderThickness" Value="0,0,1,1" />
+            </Style>
+
+            <Style TargetType="DataGridCell">
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="8,0" />
+                <Setter Property="Foreground" Value="{StaticResource Text}" />
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{StaticResource AccentDim}" />
+                        <Setter Property="Foreground" Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="TabItem">
+                <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+                <Setter Property="Foreground" Value="{StaticResource Muted}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Border x:Name="bd" Background="Transparent" Padding="16,9"
+                                    BorderBrush="Transparent" BorderThickness="0,0,0,2">
+                                <ContentPresenter ContentSource="Header" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                    <Setter Property="Foreground" Value="{StaticResource Text}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{StaticResource Surface}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="TabControl">
+                <Setter Property="Background" Value="{StaticResource Ink}" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+
+            <Style TargetType="ProgressBar">
+                <Setter Property="Background" Value="{StaticResource Surface}" />
+                <Setter Property="Foreground" Value="{StaticResource Accent}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Height" Value="4" />
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

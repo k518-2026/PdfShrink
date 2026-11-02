@@ -1,0 +1,34 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+publish/
+*.exe
+*.dll
+*.pdb
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+packages/
+*.nupkg
+
+# ClamAV (Aegis uses it from a folder next to the exe; never commit binaries or definitions)
+ClamAV/
+ClamAV_Engine/
+*.cvd
+*.cld
+*.cud
+
+# Test output
+**/work/
+**/recv-test/
+TestResults/

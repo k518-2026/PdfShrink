@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>PdfShrink</RootNamespace>
+    <AssemblyName>PdfShrink</AssemblyName>
+    <Product>PdfShrink</Product>
+    <AssemblyTitle>PdfShrink — PDF を小さく</AssemblyTitle>
+    <Version>1.0.0</Version>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>ja</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PDF の読み書き。MIT ライセンス（旧 PDFTools の MuPDF・旧 PDFTools2 の iText は AGPL のため使わない） -->
+    <PackageReference Include="PdfSharp" Version="6.1.1" />
+  </ItemGroup>
+
+</Project>

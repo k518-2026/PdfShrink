@@ -1,0 +1,89 @@
+<Window x:Class="PdfShrink.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PdfShrink — PDF を小さく" Width="860" Height="640" MinWidth="640" MinHeight="480"
+        Background="{StaticResource Ink}" Icon="app.ico"
+        FontFamily="{StaticResource UiFont}" WindowStartupLocation="CenterScreen"
+        AllowDrop="True" DragOver="OnDragOver" Drop="OnDrop">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock Text="PdfShrink" Style="{StaticResource H2}" />
+            <TextBlock Foreground="{StaticResource Muted}" TextWrapping="Wrap"
+                       Text="PDF の中の画像を圧縮し直して、ファイルを小さくします。元のファイルはそのまま残し、同じフォルダーに「名前_compressed.pdf」を作ります。" />
+        </StackPanel>
+
+        <!-- ドロップ先 -->
+        <Border Grid.Row="1" x:Name="DropZone" Height="110" CornerRadius="6" BorderThickness="2"
+                BorderBrush="{StaticResource Line}" Background="{StaticResource Panel}" Margin="0,0,0,14">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="ここに PDF をドラッグ＆ドロップ（複数可）" FontSize="16" HorizontalAlignment="Center" />
+                <Button Content="ファイルを選ぶ…" Click="OnPickFiles" HorizontalAlignment="Center" Margin="0,10,0,0" MinWidth="140" />
+            </StackPanel>
+        </Border>
+
+        <!-- 設定 -->
+        <Border Grid.Row="2" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="1"
+                CornerRadius="4" Padding="14,10" Margin="0,0,0,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="画像の画質" VerticalAlignment="Center" Margin="0,0,12,0"
+                           Foreground="{StaticResource Muted}" />
+                <Slider Grid.Row="0" Grid.Column="1" x:Name="QualitySlider" Minimum="10" Maximum="100" Value="60"
+                        TickFrequency="10" IsSnapToTickEnabled="False" SmallChange="5" LargeChange="10"
+                        VerticalAlignment="Center" ValueChanged="OnQualityChanged" />
+                <TextBlock Grid.Row="0" Grid.Column="2" x:Name="QualityText" Width="190" Margin="12,0,0,0"
+                           VerticalAlignment="Center" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="画像の大きさ" VerticalAlignment="Center" Margin="0,10,12,0"
+                           Foreground="{StaticResource Muted}" />
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="SizeCombo" HorizontalAlignment="Left" MinWidth="280"
+                          Margin="0,10,0,0" SelectedIndex="2">
+                    <ComboBoxItem Content="縮小しない" Tag="0" />
+                    <ComboBoxItem Content="長辺 3000 ピクセルまで" Tag="3000" />
+                    <ComboBoxItem Content="長辺 2000 ピクセルまで（おすすめ）" Tag="2000" />
+                    <ComboBoxItem Content="長辺 1500 ピクセルまで" Tag="1500" />
+                    <ComboBoxItem Content="長辺 1000 ピクセルまで（画面で見るだけ）" Tag="1000" />
+                </ComboBox>
+            </Grid>
+        </Border>
+
+        <!-- 結果 -->
+        <DataGrid Grid.Row="3" x:Name="ResultGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                  HeadersVisibility="Column" CanUserAddRows="False" SelectionMode="Single"
+                  MouseDoubleClick="OnRowDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ファイル" Binding="{Binding FileName}" Width="*" />
+                <DataGridTextColumn Header="圧縮前" Binding="{Binding Before}" Width="90" />
+                <DataGridTextColumn Header="圧縮後" Binding="{Binding After}" Width="90" />
+                <DataGridTextColumn Header="削減" Binding="{Binding Ratio}" Width="80" />
+                <DataGridTextColumn Header="状態" Binding="{Binding Status}" Width="230" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="4" Margin="0,12,0,0">
+            <TextBlock x:Name="FooterText" VerticalAlignment="Center" Foreground="{StaticResource Muted}"
+                       Text="行をダブルクリックすると、保存先のフォルダーを開きます。" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="CancelButton" Content="中止" Click="OnCancel" IsEnabled="False" MinWidth="80" />
+                <Button Content="一覧を消去" Click="OnClear" MinWidth="110" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
